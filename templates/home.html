@@ -1,0 +1,46 @@
+{% extends "base.html"%}
+{%load static%}
+{% block content%}
+<h1>Laibrary Collections</h1>
+    <title>Online Library</title>
+<div class="container mt-3">
+    {% for category in categories %}
+    <section id="cat-{{category.id}}" class="mt-5">
+        <h2 class="mb-3">{{category.cate}}</h2>
+        <div class="row">
+            {% for book in category.books.all %}
+                  <!-- COLUMN -->
+                <div class="col-6 col-md-3 mb-4">
+                    <!-- CARD -->
+                    <div class="card book-card h-100">
+
+                        {% if book.image %}
+                            <img src="{{ book.image.url }}" class="book-img">
+                        {% endif %}
+
+                        <div class="p-2">
+                            <div class="book-title">
+                                {{ book.title|truncatechars:20 }}
+                            </div>
+                            <div class="book-author">
+                                {{ book.author }}
+                            </div>
+
+                            {% if user.is_authenticated and not user.is_staff %}
+                                <div class="text-end mt-2">
+                                    <a href="{%url 'Add_favorite' book.id%}" style="text-decoration: none; font-size: 20px; color: red;">❤️</a>
+                                </div>
+                                
+                            {% endif %}
+
+                        </div>   
+                    </div>        
+                </div>
+            {% empty %}
+                <p class="text-muted">No books in this category</p>
+            {% endfor %}    
+        </div>
+    </section>
+    {%endfor%}
+    {%endblock%}
+</div>

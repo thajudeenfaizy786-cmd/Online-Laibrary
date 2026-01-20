@@ -1,0 +1,47 @@
+{%extends 'base.html'%}
+
+{% block content %}
+<div class="container mt-4">
+  <h3> Manage Books</h3>
+
+  <table class="table table-bordered mt-3">
+    <thead class="table-dark">
+      <tr>
+        <th>Image</th>
+        <th>Title</th>
+        <th>Author</th>
+        <th>Category</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {% for book in books %}
+      <tr>
+        <td>
+          {% if book.image %}
+            <img src="{{ book.image.url }}" width="60">
+          {% endif %}
+        </td>
+        <td>{{ book.title }}</td>
+        <td>{{ book.author }}</td>
+        <td>{{ book.cate }}</td>
+        <td>
+          <a href="{%url 'edit_book' book.id%}" class="btn btn-sm btn-primary">
+            Edit
+          </a>
+          <form action="{%url 'delete_book' book.id%}" method="post" style="display:inline" onsubmit="return confirm('Are you sure?');">
+            {%csrf_token%}
+            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+          </form>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="5">No books found</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

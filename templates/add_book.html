@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{%block content %}
+<div class="container mt-5">
+    <h3 class="mb-4">+ Add New Book</h3>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label>Title</label>
+            {{form.title}}
+        </div>
+        <div class="mb-3">
+            <label>Author</label>
+            {{form.author}}
+        </div>
+        <div class="mb-3">
+            <label>Catagory</label>
+            {{form.cate}}
+        </div>
+        <div class="mb-3">
+            <label>Image</label>
+            {{form.image}}
+        </div>
+        
+        <button type="submit" class="btn btn-success mt-3">
+            Save Book
+        </button>
+    </form>
+</div>
+{% endblock %}
