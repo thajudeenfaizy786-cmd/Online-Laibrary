@@ -1,0 +1,5 @@
+media/
+__pucache__/
+*.pyc
+db.sqlite3
+.env

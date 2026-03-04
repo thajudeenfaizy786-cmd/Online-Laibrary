@@ -1,0 +1,47 @@
+{%extends 'base.html'%}
+{%block content%}
+<style>
+    .page-title{font-size: 22px; font-weight: 600; margin-bottom: 15px;}
+    .user-table{width: 100%; border-collapse: collapse; background: #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.08);}
+    .user-table thead{background: #212529; color: #ffffff;}
+    .user-table th,
+    .user-table td{padding: 12px; text-align: center; border-bottom: 1px solid #e0e0e0;}
+    .user-table tbody:hover{background-color: #f5f5f5;}
+    .delete-btn{background: #dc3545; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;}
+    .delete-btn:hover{background: #b02a37;}
+    .empty-text{text-align: center; color: #666;}
+</style>
+<div class="container mt-4">
+    <div class="page-title">Manage Users</div>
+    <table class="user-table">
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for user in users%}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{user.username}}</td>
+            <td>{{user.email}}</td>
+            <td>
+                <form action="{%url 'delete_user' user.id%}" method="post" onsubmit="return confirm('Are you sure want delete this user?');">
+                    {%csrf_token%}
+                    <button type="submit" class="delete-btn">Delete</botton>
+                </form>
+            </td>
+        </tr>
+        {%empty%}
+            <tr>
+                <td colspan="4" class="empty-text">No users found</td>
+                
+            </tr>
+        {%endfor%}
+        </tbody>    
+    </table>
+</div>
+{%endblock%}

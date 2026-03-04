@@ -1,0 +1,76 @@
+{% extends "base.html"%}
+{%load static%}
+{% block content %}
+
+<h2>Favorite Books</h2>
+<style>
+table {
+    border-collapse: collapse;
+    width: 60%;
+    margin-top: 15px;
+}
+
+table td {
+    border: 1px solid #333;
+    padding: 10px;
+    vertical-align: middle;
+}
+
+table tr:first-child td {
+    font-weight: bold;
+    background-color: #f2f2f2;
+    text-align: center;
+}
+
+/* Book image */
+table img {
+    width: 60px;
+    height: auto;
+    display: block;
+    margin-bottom: 6px;
+    border-radius: 4px;
+}
+
+/* Book title */
+table h6 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* Author text */
+table p {
+    margin: 0;
+    font-size: 14px;
+}
+
+/* Remove link */
+table a {
+    color: #dc3545;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+table a:hover {
+    text-decoration: underline;
+}
+</style>
+
+<table>
+    <tr>
+        <td>Book</td>
+        <td>Author</td>
+        <td>Remove</td>
+    </tr>
+    {%for i in bitems%}
+    <tr>
+        <td>
+            <img src="{{i.book.image.url}}" alt="" height="100px" width="100px">
+            <h6>{{i.book.title}}</h6>
+        </td>
+        <td><p>{{i.book.author}}</p></td>
+        <td><a href="{% url 'remove_favorite' i.id %}">Remove</a></td>
+    </tr>
+    {%endfor%}
+</table>
+{%endblock%}
