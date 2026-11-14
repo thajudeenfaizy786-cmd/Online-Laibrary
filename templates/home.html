@@ -1,12 +1,13 @@
 {% extends "base.html"%}
 {%load static%}
 {% block content%}
-<h1>Laibrary Collections</h1>
-    <title>Online Library</title>
+<h1 class="text-center brand-title">READORA</h1>`
 <div class="container mt-3">
     {% for category in categories %}
-    <section id="cat-{{category.id}}" class="mt-5">
-        <h2 class="mb-3">{{category.cate}}</h2>
+    <section id="cat-{{category.id}}" class="mt-1">
+        <div class="category-title-box text-center">
+            <h1 class="category-title">{{category.cate}}</h1>
+        </div>
         <div class="row">
             {% for book in category.books.all %}
                   <!-- COLUMN -->

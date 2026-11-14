@@ -4,6 +4,8 @@ from django.contrib.auth import authenticate,login,logout
 from.models import Collections,Category,Profile,FavoriteBooks
 from.forms import BookForm,UserForm,ProfileForm
 from django.contrib.admin.views.decorators import staff_member_required
+from django.core.cache import cache
+from .tasks import send_welcome_email
 
 # Create your views here.
 
@@ -21,6 +23,13 @@ def signup(request):
             email=email,
             password=password
         )
+
+        #Celery background task
+        send_welcome_email.delay(
+            user.email,
+            user.username
+        )
+        
         login(request,user)
         return redirect('home')
     return redirect('signup')
@@ -43,17 +52,27 @@ def log_out(request):
     return redirect('login_view')
 
 def home(request):
-    categories=Category.objects.prefetch_related('books').all()
+    categories = cache.get("home_categories")
+
+    if categories is None:
+       categories=Category.objects.prefetch_related('books').all()
+       cache.set("home_categories",categories,300)
+       print("Loading from Database...")
+    else:
+        print("Loading from Cache")
+
     context={
         'categories':categories,
     }
-    return render(request,'home.html',context)    
+    return render(request,'home.html',context)         
+    
  
 def add_book(request):
     if request.method == "POST":
         form=BookForm(request.POST,request.FILES)
         if form.is_valid():
             form.save()
+            cache.delete("home_categories")
             return redirect("home")
     else:
         form= BookForm()
@@ -71,6 +90,7 @@ def edit_book(request,bid):
         form=BookForm(request.POST,request.FILES,instance=books)
         if form.is_valid():
             form.save()
+            cache.delete("home_categories")
             return redirect('manage_book')
     else:
         form=BookForm(instance=books)
@@ -81,6 +101,7 @@ def delete_book(request,bid):
     books=get_object_or_404(Collections,id=bid)
     if request.method == "POST":
         books.delete()
+        cache.delete("home_categories")
         return redirect('manage_book')
     return redirect('manage_book')    
 
@@ -93,6 +114,7 @@ def delete_user(request,uid):
     user=get_object_or_404(User,id=uid)
     if request.method == "POST":
         user.delete()
+        cache.delete("home_categories")
         return redirect('manage_user')
     return redirect('manage_user')  
 
@@ -119,6 +141,7 @@ def Add_favorite(request,fid):
     favorite=FavoriteBooks.objects.filter(user=request.user,book=book).first()
     if favorite:
         favorite.delete()
+        cache.delete("home_categories")
     else:
         FavoriteBooks.objects.create(user=request.user,book=book)
     return redirect (request.META.get('HTTP_REFERER','home'))        
@@ -126,6 +149,7 @@ def Add_favorite(request,fid):
 def remove_favorite(request,fid):
     f_delete=FavoriteBooks.objects.filter(id=fid)
     f_delete.delete()
+    cache.delete("home_categories")
     return redirect('favorite_books')
 
 def read(request,rid):
