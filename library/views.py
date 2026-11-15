@@ -23,13 +23,8 @@ def signup(request):
             email=email,
             password=password
         )
-
         #Celery background task
-        send_welcome_email.delay(
-            user.email,
-            user.username
-        )
-        
+        print(f"Welcome {user.username}! Thanks for joining our library.")
         login(request,user)
         return redirect('home')
     return redirect('signup')
